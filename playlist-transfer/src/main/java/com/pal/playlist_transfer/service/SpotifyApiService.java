@@ -1,9 +1,6 @@
 package com.pal.playlist_transfer.service;
 
-import com.pal.playlist_transfer.dto.spotify.SpotifyPagingObject;
-import com.pal.playlist_transfer.dto.spotify.SpotifyPlaylistDto;
-import com.pal.playlist_transfer.dto.spotify.SpotifyTrackDto;
-import com.pal.playlist_transfer.dto.spotify.SpotifyTrackItemDto;
+import com.pal.playlist_transfer.dto.spotify.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
@@ -113,5 +110,38 @@ public class SpotifyApiService {
         }
         log.info("Successfully fetched {} valid, non-local tracks for playlist ID: {}.", allTracks.size(), playlistId);
         return allTracks;
+    }
+
+
+    /**
+     * Gets detailed information for a specific playlist.
+     * @param playlistId The ID of the playlist.
+     * @return SpotifyFullPlaylistDto containing playlist details.
+     */
+
+    public SpotifyFullPlaylistDto getPlaylistDetails(String playlistId) {
+        log.info("Fetching details for spotify playlist ID: {}", playlistId);
+        String url = SPOTIFY_API_BASE_URL + "/playlists/" + playlistId;
+
+        try {
+            SpotifyFullPlaylistDto playlistDetails = this.webClient.get()
+                    .uri(url)
+                    .retrieve()
+                    .bodyToMono(SpotifyFullPlaylistDto.class)
+                    .block();
+
+            if(playlistDetails!=null){
+                log.info("Successfully fetched details for playlist : {}", playlistDetails);
+                return playlistDetails;
+            }
+            else {
+                log.error("Recieved null response when fetching details for playlist : {}", playlistId);
+                throw new RuntimeException("Could not retrieve details for playlist ID: " + playlistId);
+            }
+        }
+        catch (Exception e) {
+            log.error("Error Fetching details for playlist {} from URL {}: {}", playlistId, url, e.getMessage(), e);
+            throw new RuntimeException("Failed to fetch details for playlist " + playlistId + ": " + e.getMessage(), e);
+        }
     }
 }
