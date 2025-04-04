@@ -236,9 +236,7 @@ This is a backend-only application. Interaction happens via API endpoints, typic
 * **No YouTube -> Spotify:** Transfer is currently one-way.
 * **Default Token Storage:** Uses Spring's default `oauth2_authorized_client` table. Could be refactored to use custom `SpotifyToken`/`YoutubeToken` entities for finer control.
 
-## Contributing 🤝
 
-(Add contribution guidelines if you want others to contribute - e.g., fork, feature branch, pull request).
 
 ## License 📄
 
